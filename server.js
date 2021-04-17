@@ -1,5 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const customerRoutes = require("./app/routes/customer.routes.js");
+const userRoutes = require("./app/routes/userRoutes.js");
+const harvestData = require("./app/helpers/harvest.js");
+const users = require("./app/controllers/userController.js");
 
 const app = express();
 
@@ -14,7 +18,16 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to bezkoder application." });
 });
 
-require("./app/routes/customer.routes.js")(app);
+customerRoutes(app);
+userRoutes(app);
+
+setInterval(() => {
+  harvestData.getTransaction();
+}, 3000);
+
+setInterval(() => {
+  users.insertHarvest();
+},10000);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;

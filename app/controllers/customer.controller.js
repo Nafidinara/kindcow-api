@@ -1,7 +1,26 @@
 const Customer = require("../models/customer.model.js");
+const response = require('./../helpers/res.js');
+const { body, validationResult } = require('express-validator');
+
+exports.validate = (method) => {
+  switch (method) {
+    case 'create': {
+     return [ 
+        body('name', 'userName doesnt exists').exists(),
+        body('email', 'Invalid email').exists().isEmail(),
+        body('active').exists(),
+       ]   
+    }
+  }
+}
 
 // Create and Save a new Customer
 exports.create = (req, res) => {
+
+  const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
   // Validate request
   if (!req.body) {
     res.status(400).send({
