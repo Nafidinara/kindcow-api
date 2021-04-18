@@ -22,6 +22,7 @@ customerRoutes(app);
 userRoutes(app);
 
 setInterval(() => {
+  console.log('get');
   harvestData.getTransaction();
 }, 3000);
 

@@ -1,7 +1,7 @@
 const sql = require("./db.js");
 
 // constructor
-const Harvest = function(harvest) {
+const Harvest = function (harvest) {
   this.time = harvest.time;
   this.hash = harvest.hash;
   this.amount = harvest.amount,
@@ -17,7 +17,7 @@ Harvest.create = (Harvest, result) => {
       return;
     }
 
-    console.log("created harvests: ", { id: res.insertId, ...Harvest });
+    // console.log("created harvests: ", { id: res.insertId, ...Harvest });
     result(null, {
       'status' : 'OK',
       'msg' : 'success created',
@@ -26,6 +26,25 @@ Harvest.create = (Harvest, result) => {
         ...Harvest
       }
     });
+  });
+};
+
+Harvest.findById = (harvestTime, result) => {
+  sql.query(`SELECT * FROM harvest WHERE time = ${harvestTime}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found data: ", res[0].time+' hash : '+res[0].hash);
+      result(null, res[0]);
+      return;
+    }
+
+    // not found Harvest with the id
+    result({ kind: "not_found" }, null);
   });
 };
 

@@ -63,6 +63,7 @@ exports.insertHarvest = (req, res) => {
   // Create a Customer
   data.forEach((data,index) => {
     if(!data.up) data.up = '0';
+
     const harvest = new Harvest({
       time: data.time,
       hash: data.hash,
@@ -71,13 +72,53 @@ exports.insertHarvest = (req, res) => {
       up: data.up,
     });
 
-    // Save Customer in the database
-    Harvest.create(harvest, (err, data) => {
-      if (err)
-        console.log(err.message || "Some error occurred while creating the Harvest.");
-      // else res.send(data);
-      else console.log(data);
+    Harvest.findById(harvest.time, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          // res.status(404).send({
+          //   message: `Not found Harvest with id ${data.time}.`
+          // });
+          console.log(`Not found Harvest time : ${harvest.hash}`);
+
+          // Save Customer in the database
+          Harvest.create(harvest, (err, data) => {
+            if (err)
+              console.log(err.message || "Some error occurred while creating the Harvest.");
+            // else res.send(data);
+            else console.log(data);
+          });
+
+        } else {
+          // res.status(500).send({
+          //   message: "Error retrieving Harvest with id " + data.time
+          // });
+          console.log("Error retrieving Harvest : "+harvest.hash);
+        }
+      } else {
+        if (data.time){
+          console.log('skipped : '+data.hash);
+        }
+      }
     });
+
+
 
   });
 };
+
+// Find a single Harvest with a harvestId
+// exports.findOne = (harvestId, res) => {
+//   Harvest.findById(harvestId, (err, data) => {
+//     if (err) {
+//       if (err.kind === "not_found") {
+//         res.status(404).send({
+//           message: `Not found Harvest with id ${harvestId}.`
+//         });
+//       } else {
+//         res.status(500).send({
+//           message: "Error retrieving Harvest with id " + harvestId
+//         });
+//       }
+//     } else consol
+//   });
+// };

@@ -20,7 +20,7 @@ exports.getTransaction = () => {
         params: {
             apikey:apikey,
             sort:'desc',
-            offset:10,
+            offset:50,
             page:1,
             contractaddress:contract,
             address:address,
@@ -28,7 +28,7 @@ exports.getTransaction = () => {
             action:'tokentx'
         }
     })
-        .then( function (response) {
+        .then( (response) => {
             response.data.result.reverse().forEach((data,index) => {
                 var d = {};
                 d.hash = data.hash;
@@ -41,70 +41,53 @@ exports.getTransaction = () => {
                 newArray.push(d);
             });
             arrayGroup = lodash.groupBy(newArray, 'hash');
+            // console.log(arrayGroup);return;
             manageArray(Array.from(new Set(hashArray)),arrayGroup);
         })
 }
 
-function manageArray(arr,arrayGroup){
+const manageArray = (arr,arrayGroup) => {
     let datas = JSON.parse(JSON.stringify(arrayGroup));
     arr.forEach((data,index) => {
+        // console.log(datas[data]);return;
         setData(datas[data]);
     });
 }
 
-function setData(data){
+
+const setData = (data) => {
     let dataSend = {};
     // console.log(data);
     // return;
     try {
-        if (!data[1]){
-            console.log('error' +JSON.stringify(data));
-            // return;
-        }else {
-            if (data[0].from == from) {
-                // console.log(data);
-                if (data[1].to == address) {
-                    dataSend.hash = data[0].hash;
-                    dataSend.time = data[0].time;
-                    dataSend.amount = data[0].amount;
-                    dataSend.from = data[1].from;
-                    dataSend.to = data[0].to;
-                }
-                if (data[1].from == address) {
-                    dataSend.hash = data[0].hash;
-                    dataSend.time = data[0].time;
-                    dataSend.amount = data[0].amount;
-                    dataSend.from = data[1].to;
-                    dataSend.to = data[0].to;
-                }
-            }
-            if (data[1].from == from) {
-                // console.log('masuuk kondisi dua');
-                if (data[0].to == address) {
-                    dataSend.hash = data[1].hash;
-                    dataSend.time = data[1].time;
-                    dataSend.amount = data[1].amount;
-                    dataSend.from = data[0].from;
-                    dataSend.to = data[1].to;
-                }
-                if (data[0].from == address) {
-                    dataSend.hash = data[1].hash;
-                    dataSend.time = data[1].time;
-                    dataSend.amount = data[1].amount;
-                    dataSend.from = data[0].to;
-                    dataSend.to = data[1].to;
-                }
-            }
+    if (data.length >= 2){
+        if (data[0].from == from){
+            if (data[1].to == address){
+                console.log({
+                    'status': 'SKIPPED bukan hervest',
+                    'data' : data
+                });
+            }else {
+                dataSend.hash = data[1].hash;
+                dataSend.time = data[1].time;
+                dataSend.amount = data[1].amount;
+                dataSend.from = data[1].to;
 
-            if (lodash.includes(arrayTime, dataSend.time) == false) {
-                baseArray.push(dataSend);
-                arrayTime.push(dataSend.time);
+                if (lodash.includes(arrayTime, dataSend.time) == false) {
+                    baseArray.push(dataSend);
+                    arrayTime.push(dataSend.time);
+                }
             }
         }
+    }else {
+        console.log({
+            'status': 'SKIPPED',
+            'data' : data
+        });
+    }
 
     } catch (error) {
         console.log(error);
-        console.log('data cuma satu : '+data[0].hash);
     }
 }
 
