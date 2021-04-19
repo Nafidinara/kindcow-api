@@ -24,11 +24,12 @@ userRoutes(app);
 setInterval(() => {
   console.log('get');
   harvestData.getTransaction();
-}, 300000);
+}, 60000);
 
 setInterval(() => {
+  console.log('insert');
   users.insertHarvest();
-},310000);
+},61000);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;
