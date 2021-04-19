@@ -81,17 +81,39 @@ exports.insertHarvest = (req, res) => {
           console.log(`Not found Harvest time : ${harvest.hash}`);
 
           // Save Customer in the database
-          Harvest.create(harvest, (err, data) => {
+           Harvest.create(harvest, (err, data) => {
             if (err)
               console.log(err.message || "Some error occurred while creating the Harvest.");
             // else res.send(data);
-            else console.log(data);
+            else //console.log(data);
+            User.findById(harvest.addr,(err,data) => {
+              if (err) {
+                if (err.kind === "not_found") {
+                  console.log('not found user pertama : '+harvest.addr);
+                } else {
+                  console.log('error retrive user pertama : '+harvest.addr);
+                }
+              } else{
+                // console.log(' dapaet trigger : '+data.id);
+                User.updateById(data.id, new User({
+                      up: data.up,
+                      up2: data.up2,
+                      harvest:harvest.amount,
+                    }), (err, data) => {
+                      if (err) {
+                        if (err.kind === "not_found") {
+                          console.log('not found user kedua : '+harvest.addr);
+                        } else {
+                          console.log('error retrive user kedua : '+harvest.addr);
+                        }
+                      } else console.log('berhasil update : '+data)
+                    }
+                );
+              }
+            });
           });
 
         } else {
-          // res.status(500).send({
-          //   message: "Error retrieving Harvest with id " + data.time
-          // });
           console.log("Error retrieving Harvest : "+harvest.hash);
         }
       } else {
@@ -105,20 +127,3 @@ exports.insertHarvest = (req, res) => {
 
   });
 };
-
-// Find a single Harvest with a harvestId
-// exports.findOne = (harvestId, res) => {
-//   Harvest.findById(harvestId, (err, data) => {
-//     if (err) {
-//       if (err.kind === "not_found") {
-//         res.status(404).send({
-//           message: `Not found Harvest with id ${harvestId}.`
-//         });
-//       } else {
-//         res.status(500).send({
-//           message: "Error retrieving Harvest with id " + harvestId
-//         });
-//       }
-//     } else consol
-//   });
-// };

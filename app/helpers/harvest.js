@@ -20,7 +20,7 @@ exports.getTransaction = () => {
         params: {
             apikey:apikey,
             sort:'desc',
-            offset:50,
+            offset:20,
             page:1,
             contractaddress:contract,
             address:address,
