@@ -30,7 +30,7 @@ Harvest.create = (Harvest, result) => {
 };
 
 Harvest.findById = (harvestTime, result) => {
-  sql.query(`SELECT * FROM harvest WHERE time = ${harvestTime}`, (err, res) => {
+  sql.query(`SELECT * FROM harvest WHERE time = ${harvestTime} LIMIT 1`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);

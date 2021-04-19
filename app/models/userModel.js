@@ -33,7 +33,7 @@ User.create = (User, result) => {
 };
 
 User.findById = (address, result) => {
-  sql.query('SELECT * FROM users WHERE addr = "'+address+'" ', (err, res) => {
+  sql.query('SELECT * FROM users WHERE addr = "'+address+'"', (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);

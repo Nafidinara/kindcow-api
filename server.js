@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // simple route
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to bezkoder application." });
+  res.json({ message: "Welcome to kindcow API" });
 });
 
 customerRoutes(app);
@@ -24,11 +24,11 @@ userRoutes(app);
 setInterval(() => {
   console.log('get');
   harvestData.getTransaction();
-}, 3000);
+}, 300000);
 
 setInterval(() => {
   users.insertHarvest();
-},10000);
+},310000);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;
